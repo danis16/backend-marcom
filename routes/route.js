@@ -5,8 +5,10 @@ const corsMiddleware = require('restify-cors-middleware');
 const moment = require('moment');
 const logger = require('../config/log');
 
-const EmployeeController = require('../controllers/employee');
+
 const UserController = require('../controllers/m_user');
+const EmployeeController = require('../controllers/m_employee');
+
 
 module.exports = exports = function(server){
 
