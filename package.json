@@ -1,0 +1,41 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Marcomm API Backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pandusatria/marcommbackend.git"
+  },
+  "keywords": [
+    "Marcomm",
+    "API",
+    "Backend",
+    "Node.js",
+    "Restify",
+    "MongoDB"
+  ],
+  "author": "Pandu Satria",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pandusatria/marcommbackend/issues"
+  },
+  "homepage": "https://github.com/pandusatria/marcommbackend#readme",
+  "dependencies": {
+    "app-root-path": "^2.1.0",
+    "bcryptjs": "^2.4.3",
+    "bunyan": "^1.8.12",
+    "jsonwebtoken": "^8.3.0",
+    "moment": "^2.22.2",
+    "mongodb": "^3.1.8",
+    "restify": "^7.2.2",
+    "restify-cors-middleware": "^1.1.1",
+    "winston": "^3.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.5"
+  }
+}
