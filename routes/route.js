@@ -6,6 +6,7 @@ const moment = require('moment');
 const logger = require('../config/log');
 
 const EmployeeController = require('../controllers/employee');
+const UserController = require('../controllers/m_user');
 
 module.exports = exports = function(server){
 
