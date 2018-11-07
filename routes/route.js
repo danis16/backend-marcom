@@ -29,4 +29,8 @@ module.exports = exports = function(server){
 
     //employee
     server.get('/api/employee/', EmployeeController.GetAllHandler);
+
+    //user
+    server.post('/api/user/login', UserController.LoginHandler);
+    server.get('/api/user/logout', Middleware.checkToken, UserController.LogoutHandler);
 };
