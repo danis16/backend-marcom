@@ -25,13 +25,7 @@ module.exports = exports = function(server){
 
     // Set Route Path Here
 
-<<<<<<< HEAD
-//Employee
-   // Supplier
-   server.get('/api/employee/', EmployeeController.GetAllHandler);
-=======
     //EMPLOYEE
     server.get('/api/employee', EmployeeController.GetAllHandler);
->>>>>>> rose
     
 };
