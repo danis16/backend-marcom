@@ -4,7 +4,7 @@ const Response = require('../config/response');
 const ObjectID = require('mongodb').ObjectID;
 const moment = require('moment');
 const logger = require('../config/log');
-const employeeModel = require('../models/employee.model');
+const employeeModel = require('../models/m_employee.model');
 
 var now = new Date();
 
