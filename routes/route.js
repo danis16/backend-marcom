@@ -4,6 +4,7 @@ const Middleware = require('../middleware/tokenauthorization');
 const corsMiddleware = require('restify-cors-middleware');
 const moment = require('moment');
 const logger = require('../config/log');
+const EmployeeController = require('../controllers/employee');
 
 const EmployeeController = require('../controllers/employee');
 
@@ -24,8 +25,13 @@ module.exports = exports = function(server){
 
     // Set Route Path Here
 
+<<<<<<< HEAD
 //Employee
    // Supplier
    server.get('/api/employee/', EmployeeController.GetAllHandler);
+=======
+    //EMPLOYEE
+    server.get('/api/employee', EmployeeController.GetAllHandler);
+>>>>>>> rose
     
 };
