@@ -102,6 +102,8 @@ const EmployeeController = {
             Response.send(res, 200, data);
         });
     },
+
+
     GetDetailBySupplierIDHandler: (req, res, next) => {
         logger.info("Initialized Supplier : GetDetailBySupplierIDHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
         let id = req.params.id;
@@ -163,6 +165,8 @@ const EmployeeController = {
             Response.send(res, 200, data);
         });
     },
+    
+    
     GetAllHandlerSortByDescending: (req, res, next) => {
         logger.info("Initialized Supplier : GetAllHandlerSortByDescending" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
@@ -228,6 +232,8 @@ const EmployeeController = {
             Response.send(res, 200, data);
         });
     },
+    
+    
     GetListContactTitleName: (req, res, next) => {
         logger.info("Initialized Supplier : GetListContactTitleName" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
