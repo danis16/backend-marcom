@@ -12,7 +12,39 @@ const EmployeeController = {
     GetAllHandler: (req, res, next) => {
         logger.info("Initialized Supplier : GetAllHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
-        global.dbo.collection('m_employee').find().toArray((err, data) => {
+        global.dbo.collection('m_employee').
+        aggregate([
+            {
+                $lookup:
+                {
+                    from: 'm_company',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'company_docs'
+                }
+            },
+            {
+                $unwind: "$company_docs"
+            },
+            {
+                $match:
+                {
+                    "id_delete": false,
+                }
+            },
+            {
+                $project:
+                {
+                    "_id" : "$_id", 
+                    "employee_number" : "$employee_number",
+                    "first_name" : "$first_name",
+                    "last_name" : "$last_name",
+                    "created_by" : "$created_by",
+                    "created_date" : "$created_date",
+                    "m_company_name" : "$company_docs.name"
+                }
+            }
+        ]).toArray((err, data) => {
             if (err) {
                 logger.info("Employee : GetAllHandler Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
                 logger.error(err);
