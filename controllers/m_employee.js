@@ -24,24 +24,19 @@ const EmployeeController = {
                 }
             },
             {
-                $unwind: "$company_docs"
-            },
-            {
                 $match:
                 {
-                    "id_delete": false,
+                    "is_delete": false,
                 }
             },
             {
                 $project:
                 {
-                    "_id" : "$_id", 
-                    "employee_number" : "$employee_number",
-                    "first_name" : "$first_name",
-                    "last_name" : "$last_name",
-                    "created_by" : "$created_by",
-                    "created_date" : "$created_date",
-                    "m_company_name" : "$company_docs.name"
+                    "employee_number" : 1,
+                    "first_name" : 1,
+                    "last_name" : 1,
+                    "created_by" : 1,
+                    "created_date" : 1
                 }
             }
         ]).toArray((err, data) => {
