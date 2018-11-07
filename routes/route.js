@@ -5,6 +5,8 @@ const corsMiddleware = require('restify-cors-middleware');
 const moment = require('moment');
 const logger = require('../config/log');
 
+const EmployeeController = require('../controllers/employee');
+
 module.exports = exports = function(server){
 
     logger.info("Initializing Route Path" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
@@ -22,6 +24,8 @@ module.exports = exports = function(server){
 
     // Set Route Path Here
 
-
+//Employee
+   // Supplier
+   server.get('/api/employee/', EmployeeController.GetAllHandler);
     
 };
