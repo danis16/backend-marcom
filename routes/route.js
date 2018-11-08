@@ -4,7 +4,7 @@ const Middleware = require('../middleware/tokenauthorization');
 const corsMiddleware = require('restify-cors-middleware');
 const moment = require('moment');
 const logger = require('../config/log');
-const EmployeeController = require('../controllers/employee');
+const EmployeeController = require('../controllers/m_employee');
 
 module.exports = exports = function(server){
 
@@ -25,5 +25,10 @@ module.exports = exports = function(server){
 
     //EMPLOYEE
     server.get('/api/employee', EmployeeController.GetAllHandler);
+    server.get('/api/employee/:id', EmployeeController.GetDetailByEmployeeIDHandler);
+    server.post('/api/employee', EmployeeController.AddEmployeeHandler);
+    server.put('/api/employee/:id', EmployeeController.UpdateEmployeeHandler);
+    server.del('/api/employee/:id', EmployeeController.DeleteEmployeeHandler);
+    // server.post('/api/employee/search', EmployeeController.SearchEmployeeHandler);
     
 };
