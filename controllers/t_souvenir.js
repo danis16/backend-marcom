@@ -11,13 +11,17 @@ const TSItemController = {
     GetAll : (req, res, next) => {
         logger.info("Initialized Transaction Item Souvenir : GetAll" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
-        global.dbo.collection('t_souvenir').find({is_delete : false}).toArray((err, data) => {
+        global.dbo.collection('t_souvenir').
+        
+        .toArray((err, data) => {
             if(err)
             {
                 logger.info("Transaction Item Souvenir  : GetAll Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
                 logger.error(err);
                 return next(new Error());
             }
+
+
 
             logger.info("Transaction Item Souvenir  : GetAll successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
             logger.info({data : data}, "Transaction Item Souvenir  : GetAll content");
@@ -26,10 +30,11 @@ const TSItemController = {
     },
     GetDetail : (req, res, next) => {
         logger.info("Initialized Transaction Item Souvenir  : GetDetail" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-
         let id = req.params.id;
+
+        global.dbo.collection('t_souvenir').find({is_delete : false}).
         
-        global.dbo.collection('t_souvenir').find({is_delete : false}).toArray((err, data) => {
+        toArray((err, data) => {
             if(err)
             {
                 logger.info("Transaction Item Souvenir  : GetDetail Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));

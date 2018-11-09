@@ -1,6 +1,6 @@
 'use strict';
 
-function model (entity)
+function model(entity)
 {
     this._id            =   entity._id;
     this.code           =   entity.code;

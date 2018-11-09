@@ -4,43 +4,38 @@ const Response = require('../config/response');
 const ObjectID = require('mongodb').ObjectID;
 const moment = require('moment');
 const logger = require('../config/log');
-const msouvenirModel = require('../models/souvenir.model');
-
+const msouvenirModel = require('../models/m_souvenir.model');
 var now = new Date();
 
 const MSouvenirController = {
+  
+    // GET ALL SOUVENIR
     GetAll : (req, res, next) => {
         logger.info("Initialized Souvenir : GetAll" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
         global.dbo.collection('m_souvenir').aggregate([
             {
-                $lookup : {
-                from : "m_unit",
-                localField : "m_unit_id",
-                foreignField : "_id",
-                as : "unit_lookup"
-                }
+                $lookup : {from : "m_unit", localField : "m_unit_id", foreignField : "_id", as : "unit_lookup"}
             },
-            {
+              {
                 $unwind : "$unit_lookup"  
             },
-            {
-                $match : {is_delete : false}
+             {
+                $match : {"is_delete" : false}
             },
             {
                 $project:
                 {
-                    "_id" : "$_id", 
-                    "code" : "$code", 
-                    "name" : "$name",
-                    "description" : "$description", 
+                    "_id" : 1, 
+                    "code" : 1, 
+                    "name" : 1,
+                    "description" : 1, 
                     "m_unit_id" : "$unit_lookup.name",
-                    //"name_unit" : "$unit_lookup.name",
-                    "is_delete" : "$is_delete",
-                    "created_by" : "$created_by",
-                    "created_date" : "$created_date",
-                    "updated_by" : "$updated_by",
-                    "updated_date" : "$updated_date"
+                    "is_delete" : 1,
+                    "created_by" : 1,
+                    "created_date" : 1,
+                    "updated_by" : 1,
+                    "updated_date" : 1
                 }
             }	
         ]).toArray((err, data) => {
@@ -56,39 +51,35 @@ const MSouvenirController = {
             Response.send(res, 200, data);
         });
     },
+
+    //GET ALL SOUVENIR BY ID
     GetDetail : (req, res, next) => {
         logger.info("Initialized Souvenir : GetDetail" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
         let id = req.params.id;
         
         global.dbo.collection('m_souvenir').aggregate([
             {
-                $lookup : {
-                from : "m_unit",
-                localField : "m_unit_id",
-                foreignField : "_id",
-                as : "unit_lookup"
-                }
+                $lookup : {from : "m_unit", localField : "m_unit_id", foreignField : "_id", as : "unit_lookup"}
             },
-            {
+              {
                 $unwind : "$unit_lookup"  
             },
-            {
-                $match : {is_delete : false}
+             {
+                $match : {"is_delete" : false}
             },
             {
                 $project:
                 {
-                    "_id" : "$_id", 
-                    "code" : "$code", 
-                    "name" : "$name",
-                    "description" : "$description", 
+                    "_id" : 1, 
+                    "code" : 1, 
+                    "name" : 1,
+                    "description" : 1, 
                     "m_unit_id" : "$unit_lookup.name",
-                    //"name_unit" : "$unit_lookup.name",
-                    "is_delete" : "$is_delete",
-                    "created_by" : "$created_by",
-                    "created_date" : "$created_date",
-                    "updated_by" : "$updated_by",
-                    "updated_date" : "$updated_date"
+                    "is_delete" : 1,
+                    "created_by" : 1,
+                    "created_date" : 1,
+                    "updated_by" : 1,
+                    "updated_date" : 1
                 }
             }	
         ]).toArray((err, data) => {
@@ -104,6 +95,8 @@ const MSouvenirController = {
             Response.send(res, 200, data);
         });
     },
+
+    //Post SOUVENIR
     Create : (req, res, next) => {
         logger.info("Initialized Souvenir : Create" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
         let reqdata = req.body;
@@ -117,7 +110,7 @@ const MSouvenirController = {
         data.created_by = "Administrator";
         data.created_date = now;
         data.updated_by = null;
-        data.updated_date = null;
+        data.updated_date = now;
         
         
         var model = new msouvenirModel(data);
@@ -125,19 +118,21 @@ const MSouvenirController = {
         global.dbo.collection('m_souvenir').insertOne(model, function(err, data){
             if(err)
             {
-                logger.info("Souvenir : Create Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                logger.error(err);
+                // logger.info("Souvenir : Create Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                // logger.error(err);
                 return next(new Error());
             }
 
             // let modelSuppliers = data.map((entity) => {
             //     return new suppliersModel(entity);
             // });
-            logger.info("Souvenir : Create successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-            logger.info({data : data}, "Souvenir : Create content");
+            // logger.info("Souvenir : Create successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+            // logger.info({data : data}, "Souvenir : Create content");
             Response.send(res, 200, data);
         });
     },
+
+    //PUT SOUVENIR
     Update : (req, res, next) => {
         logger.info("Initialized Souvenir : Update" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
@@ -222,6 +217,8 @@ const MSouvenirController = {
             );
         });
     },
+
+    //DELETE SOUVENIR
     Delete : (req, res, next) => {
         logger.info("Initialized Souvenir : Delete" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
@@ -229,11 +226,11 @@ const MSouvenirController = {
         var oldmodel = {};
         var deletemodel = {};
 
-        global.dbo.collection('m_souvenir').find({is_delete : false, '_id' : ObjectID(id)}).toArray((err, data) => {
+        global.dbo.collection('m_souvenir').findOne({'_id' : ObjectID (id)}).toArray((err, data) => {
             if(err)
             {
-                logger.info("Souvenir : Delete Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                logger.error(err);
+                // logger.info("Souvenir : Delete Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                // logger.error(err);
                 return next(new Error());
             }
 
@@ -250,7 +247,7 @@ const MSouvenirController = {
             deletemodel.created_by = oldmodel[0].created_by;
             deletemodel.created_date = oldmodel[0].created_date;
             deletemodel.updated_by = oldmodel[0].updated_by;
-            deletemodel.updated_date = now;
+            deletemodel.updated_date = null;
 
             var model = new msouvenirModel(deletemodel);
 
@@ -261,16 +258,16 @@ const MSouvenirController = {
                 function(err, data){
                     if(err)
                     {
-                        logger.info("Souvenir : Delete Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                        logger.error(err);
+                        // logger.info("Souvenir : Delete Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                        // logger.error(err);
                         return next(new Error());
                     }
-                    logger.info("Souvenir : Delete successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                    logger.info({data : data}, "Souvenir : Delete content");
+                    // logger.info("Souvenir : Delete successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                    // logger.info({data : data}, "Souvenir : Delete content");
                     Response.send(res, 200, data);
                 }
             );
         });
-    }
+    },
 };
 module.exports = MSouvenirController;
