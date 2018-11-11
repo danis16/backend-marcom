@@ -300,10 +300,6 @@ const EmployeeController = {
         });
     },
 
-<<<<<<< HEAD:controllers/m_employee.js
-
-=======
->>>>>>> rose:controllers/m_employee.js
     GetDetailBySupplierIDHandler: (req, res, next) => {
         logger.info("Initialized Supplier : GetDetailBySupplierIDHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
         let id = req.params.id;

@@ -11,9 +11,7 @@ const TSItemController = {
     GetAll : (req, res, next) => {
         logger.info("Initialized Transaction Item Souvenir : GetAll" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
-        global.dbo.collection('t_souvenir').
-        
-        .toArray((err, data) => {
+        global.dbo.collection('t_souvenir').toArray((err, data) => {
             if(err)
             {
                 logger.info("Transaction Item Souvenir  : GetAll Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));

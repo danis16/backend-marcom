@@ -28,7 +28,7 @@ module.exports = exports = function(server){
     // Set Route Path Here
 
     //employee
-    server.get('/api/employee/', EmployeeController.GetAllHandler);
+    // server.get('/api/employee/', EmployeeController.GetAllHandler);
 
     //user
     server.post('/api/user/login', UserController.LoginHandler);
