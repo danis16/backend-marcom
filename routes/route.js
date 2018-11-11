@@ -5,16 +5,10 @@ const corsMiddleware = require('restify-cors-middleware');
 const moment = require('moment');
 const logger = require('../config/log');
 
-<<<<<<< HEAD
-
 const UserController = require('../controllers/m_user');
 const EmployeeController = require('../controllers/m_employee');
-=======
-const EmployeeController = require('../controllers/employee');
 const MsouvenirController = require('../controllers/m_souvenir');
 const TSItemController = require('../controllers/t_souvenir');
->>>>>>> origin/mayang
-
 
 module.exports = exports = function(server){
 
@@ -54,5 +48,12 @@ module.exports = exports = function(server){
      // server.put('/api/souvenir/:id', msouvenir.Update);
      // server.del('/api/souvenir/:id', msouvenir.Delete)
    
+    //EMPLOYEE
+    server.get('/api/employee/', EmployeeController.GetAllHandler);
+    server.get('/api/employee/:id', EmployeeController.GetDetailByEmployeeIDHandler);
+    server.post('/api/employee/', EmployeeController.AddEmployeeHandler);
+    server.put('/api/employee/:id', EmployeeController.UpdateEmployeeHandler);
+    server.del('/api/employee/:id', EmployeeController.DeleteEmployeeHandler);
+    // server.post('/api/employee/search', EmployeeController.SearchEmployeeHandler);
     
 };

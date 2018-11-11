@@ -1,7 +1,7 @@
 'use strict';
 
 const Response = require('../config/response');
-const ObjectID = require('mongodb').ObjectID;
+const ObjectId = require('mongodb').ObjectId;
 const moment = require('moment');
 const logger = require('../config/log');
 const employeeModel = require('../models/m_employee.model');
@@ -12,33 +12,28 @@ const EmployeeController = {
     GetAllHandler: (req, res, next) => {
         logger.info("Initialized Supplier : GetAllHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
-        global.dbo.collection('m_employee').
-        aggregate([
-            {
-                $lookup:
-                {
-                    from: 'm_company',
-                    localField: '_id',
-                    foreignField: '_id',
-                    as: 'company_docs'
-                }
-            },
+        global.dbo.collection('m_employee').aggregate([
+            { $lookup: { from: 'm_company', localField: 'm_company_id', foreignField: '_id', as: 'Company_Doc' } },
+            { $unwind: '$Company_Doc' },
             {
                 $match:
                 {
-                    "is_delete": false,
+                    "is_delete": false
+
                 }
             },
             {
-                $project:
-                {
-                    "employee_number" : 1,
-                    "first_name" : 1,
-                    "last_name" : 1,
-                    "created_by" : 1,
-                    "created_date" : 1
+                $project: {
+                    'employee_number': 1,
+                    'first_name': 1,
+                    'last_name': 1,
+                    'company_name': '$Company_Doc.name',
+                    'created_date': 1,
+                    'created_by': 1
+
                 }
             }
+
         ]).toArray((err, data) => {
             if (err) {
                 logger.info("Employee : GetAllHandler Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
@@ -49,6 +44,183 @@ const EmployeeController = {
             logger.info("Employee : GetAllHandler successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
             logger.info({ data: data }, "Employee : GetAllHandler content");
             Response.send(res, 200, data);
+        });
+    },
+
+
+    GetDetailByEmployeeIDHandler: (req, res, next) => {
+        logger.info("Initialized Employee : GetDetailByEmployeeIDHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+        let id = req.params.id;
+
+        global.dbo.collection('m_employee').aggregate([
+            { $lookup: { from: 'm_company', localField: 'm_company_id', foreignField: '_id', as: 'Company_Doc' } },
+            { $unwind: '$Company_Doc' },
+            {
+                $match:
+                {
+                    "is_delete": false,
+                    "_id": ObjectId(id)
+
+                }
+            },
+            {
+                $project: {
+                    'employee_number': 1,
+                    'first_name': 1,
+                    'last_name': 1,
+                    'company_name': '$Company_Doc.name',
+                    'created_date': 1,
+                    'created_by': 1
+
+                }
+            }
+
+        ]).toArray((err, data) => {
+            if (err) {
+                logger.info("Employee : GetDetailByEmployeeIDHandler Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                logger.error(err);
+                return next(new Error());
+            }
+
+            logger.info("Employee : GetDetailByEmployeeIDHandler successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+            logger.info({ data: data }, "Employee : GetDetailByEmployeeIDHandler content");
+            Response.send(res, 200, data);
+        });
+    },
+
+
+
+    AddEmployeeHandler: (req, res, next) => {
+        logger.info("Initialized Employee : AddEmployeeHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+
+        let entity = req.body;
+        let employee = {};
+
+        global.dbo.collection('m_employee').find({'employee_number':entity.employee_number}, function (err, employee) {
+            if (err) {
+                return next(new Error());
+            }
+            Response.send(res, 200, entity.employee_number);
+        });
+
+        
+
+        // employee._id = entity._id;
+        employee.employee_number = entity.employee_number;
+        employee.first_name = entity.first_name;
+        employee.last_name = entity.last_name;
+        employee.m_company_id = ObjectId(entity.m_company_id);
+        employee.email = entity.email;
+        employee.is_delete = false;
+        employee.created_by = null;
+        employee.created_date = now;
+        employee.update_by = null;
+        employee.update_date = now;
+
+        var model = new employeeModel(employee);
+
+        global.dbo.collection('m_employee').insertOne(model, function (err, employee) {
+            if (err) {
+                return next(new Error());
+            }
+
+            Response.send(res, 200, employee);
+        });
+    },
+
+
+    UpdateEmployeeHandler : (req, res, next) => {
+        let id = req.params.id;
+        let reqdata = req.body;
+        var oldmodel = {};
+        var updatemodel = {};
+
+        global.dbo.collection('m_employee').find({'_id' : ObjectId(id)}).toArray((err, data) => {
+            if(err)
+            {
+                return next(new Error());
+            }
+
+            
+
+            oldmodel = data.map((entity) => {
+                return new employeeModel(entity);
+            });
+
+            updatemodel._id = ObjectId(id);
+            updatemodel.employee_number = reqdata.employee_number;
+            updatemodel.first_name = reqdata.first_name;
+            updatemodel.last_name = reqdata.last_name;
+            updatemodel.m_company_id = ObjectId(reqdata.m_company_id);
+            updatemodel.email = reqdata.email;
+            updatemodel.is_delete=false;
+            updatemodel.created_date = oldmodel[0].created_date;
+            updatemodel.created_by = oldmodel[0].created_by;
+            updatemodel.updated_date = now;
+            updatemodel.updated_by = null;
+
+            var model = new employeeModel(updatemodel);
+
+            global.dbo.collection('m_employee').findOneAndUpdate
+            (
+                {'_id' : ObjectId(id)},
+                {$set: model},
+                function(err, data){
+                    if(err)
+                    {
+                        return next(new Error());
+                    }
+
+                    Response.send(res, 200, data);
+                }
+            );
+        });
+    },
+
+
+    DeleteEmployeeHandler : (req, res, next) => {
+        let id = req.params.id;
+        // let reqdata = req.body;
+        var oldmodel = {};
+        var updatemodel = {};
+
+        global.dbo.collection('m_employee').find({'_id' : ObjectId(id)}).toArray((err, data) => {
+            if(err)
+            {
+                return next(new Error());
+            }
+
+            oldmodel = data.map((entity) => {
+                return new employeeModel(entity);
+            });
+
+            updatemodel._id = ObjectId(id);
+            updatemodel.employee_number = oldmodel[0].employee_number;
+            updatemodel.first_name = oldmodel[0].first_name;
+            updatemodel.last_name = oldmodel[0].last_name;
+            updatemodel.m_company_id = ObjectId(oldmodel[0].m_company_id);
+            updatemodel.email = oldmodel[0].email;
+            updatemodel.is_delete=true;
+            updatemodel.created_date = oldmodel[0].created_date;
+            updatemodel.created_by = oldmodel[0].created_by;
+            updatemodel.updated_date = oldmodel[0].update_date;
+            updatemodel.updated_by = null;
+
+            var model = new employeeModel(updatemodel);
+
+            global.dbo.collection('m_employee').findOneAndUpdate
+            (
+                {'_id' : ObjectId(id)},
+                {$set: model},
+                function(err, data){
+                    if(err)
+                    {
+                        return next(new Error());
+                    }
+
+                    Response.send(res, 200, data);
+                }
+            );
         });
     },
 
@@ -128,7 +300,10 @@ const EmployeeController = {
         });
     },
 
+<<<<<<< HEAD:controllers/m_employee.js
 
+=======
+>>>>>>> rose:controllers/m_employee.js
     GetDetailBySupplierIDHandler: (req, res, next) => {
         logger.info("Initialized Supplier : GetDetailBySupplierIDHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
         let id = req.params.id;
