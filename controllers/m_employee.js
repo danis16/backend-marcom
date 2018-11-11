@@ -96,6 +96,15 @@ const EmployeeController = {
         let entity = req.body;
         let employee = {};
 
+        global.dbo.collection('m_employee').find({'employee_number':entity.employee_number}, function (err, employee) {
+            if (err) {
+                return next(new Error());
+            }
+            Response.send(res, 200, entity.employee_number);
+        });
+
+        
+
         // employee._id = entity._id;
         employee.employee_number = entity.employee_number;
         employee.first_name = entity.first_name;
@@ -110,7 +119,7 @@ const EmployeeController = {
 
         var model = new employeeModel(employee);
 
-        global.dbo.collection('m_employee').insertOne(model, function (err, data) {
+        global.dbo.collection('m_employee').insertOne(model, function (err, employee) {
             if (err) {
                 return next(new Error());
             }
@@ -131,6 +140,8 @@ const EmployeeController = {
             {
                 return next(new Error());
             }
+
+            
 
             oldmodel = data.map((entity) => {
                 return new employeeModel(entity);
@@ -212,12 +223,6 @@ const EmployeeController = {
             );
         });
     },
-
-
-
-
-
-
 
 
     GetAllHandlerSearch: (req, res, next) => {

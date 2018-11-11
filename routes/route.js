@@ -24,9 +24,9 @@ module.exports = exports = function(server){
     // Set Route Path Here
 
     //EMPLOYEE
-    server.get('/api/employee', EmployeeController.GetAllHandler);
+    server.get('/api/employee/', EmployeeController.GetAllHandler);
     server.get('/api/employee/:id', EmployeeController.GetDetailByEmployeeIDHandler);
-    server.post('/api/employee', EmployeeController.AddEmployeeHandler);
+    server.post('/api/employee/', EmployeeController.AddEmployeeHandler);
     server.put('/api/employee/:id', EmployeeController.UpdateEmployeeHandler);
     server.del('/api/employee/:id', EmployeeController.DeleteEmployeeHandler);
     // server.post('/api/employee/search', EmployeeController.SearchEmployeeHandler);
