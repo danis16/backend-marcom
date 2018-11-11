@@ -27,9 +27,11 @@ const EmployeeController = {
                     'employee_number': 1,
                     'first_name': 1,
                     'last_name': 1,
-                    'company_name': '$Company_Doc.name',
+                    'company_name': '$Company_Doc.nama',
                     'created_date': 1,
-                    'created_by': 1
+                    'created_by': 1,
+                    'email' : 1
+
 
                 }
             }
@@ -46,6 +48,25 @@ const EmployeeController = {
             Response.send(res, 200, data);
         });
     },
+
+
+    GetListCompanyName : (req, res, next) => {
+        logger.info("Initialized Supplier : GetListCompanyName" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+
+        global.dbo.collection('m_company').aggregate([]).toArray((err, data) => {
+            if(err)
+            {
+                logger.info("Supplier : GetListComtactName Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                logger.error(err);
+                return next(new Error());
+            }
+
+            logger.info("Supplier : GetListComtactName successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+            logger.info({data : data}, "Supplier : GetListComtactName content");
+            Response.send(res, 200, data);
+        });
+    },
+
 
 
     GetDetailByEmployeeIDHandler: (req, res, next) => {
@@ -361,8 +382,6 @@ const EmployeeController = {
             Response.send(res, 200, data);
         });
     },
-    
-    
     GetAllHandlerSortByDescending: (req, res, next) => {
         logger.info("Initialized Supplier : GetAllHandlerSortByDescending" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
@@ -428,8 +447,6 @@ const EmployeeController = {
             Response.send(res, 200, data);
         });
     },
-    
-    
     GetListContactTitleName: (req, res, next) => {
         logger.info("Initialized Supplier : GetListContactTitleName" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 

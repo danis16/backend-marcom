@@ -49,11 +49,12 @@ module.exports = exports = function(server){
      // server.del('/api/souvenir/:id', msouvenir.Delete)
    
     //EMPLOYEE
-    server.get('/api/employee/', EmployeeController.GetAllHandler);
-    server.get('/api/employee/:id', EmployeeController.GetDetailByEmployeeIDHandler);
-    server.post('/api/employee/', EmployeeController.AddEmployeeHandler);
-    server.put('/api/employee/:id', EmployeeController.UpdateEmployeeHandler);
-    server.del('/api/employee/:id', EmployeeController.DeleteEmployeeHandler);
+      server.get('/api/employee/', EmployeeController.GetAllHandler);
+      server.get('/api/employee/:id', EmployeeController.GetDetailByEmployeeIDHandler);
+      server.post('/api/employee/', EmployeeController.AddEmployeeHandler);
+      server.put('/api/employee/:id', EmployeeController.UpdateEmployeeHandler);
+      server.del('/api/employee/:id', EmployeeController.DeleteEmployeeHandler);
+      server.get('/api/employee/getcompany', EmployeeController.GetListCompanyName);
     // server.post('/api/employee/search', EmployeeController.SearchEmployeeHandler);
     
 };
