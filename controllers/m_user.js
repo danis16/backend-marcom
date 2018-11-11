@@ -24,17 +24,17 @@ const UserController = {
         }
         else
         {
-            global.dbo.collection('User').findOne({UserName : usernm}, (err, data) => {
+            global.dbo.collection('m_user').findOne({username : usernm}, (err, data) => {
                 if(data)
                 {
-                    if(bcrypt.compareSync(password, data.Password))
+                    if(bcrypt.compareSync(password, data.password))
                     {
                         // Generate JWT Token
                         let token = jwt.sign(data, secret.secretkey,{
                             expiresIn: 7200
                         });
 
-                        delete data.Password;
+                        delete data.password;
 
                         let doc = {
                             userdata : data,
