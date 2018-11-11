@@ -1,0 +1,17 @@
+diff a/controllers/m_employee.js b/controllers/m_employee.js	(rejected hunks)
+@@ -96,6 +96,15 @@
+         let entity = req.body;
+         let employee = {};
+ 
++        global.dbo.collection('m_employee').find({'employee_number':entity.employee_number}, function (err, employee) {
++            if (err) {
++                return next(new Error());
++            }
++            Response.send(res, 200, entity.employee_number);
++        });
++
++        
++
+         // employee._id = entity._id;
+         employee.employee_number = entity.employee_number;
+         employee.first_name = entity.first_name;

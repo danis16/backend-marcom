@@ -53,8 +53,6 @@ const EmployeeController = {
     },
 
 
-
-
     GetAllHandlerSearch: (req, res, next) => {
         logger.info("Initialized Supplier : GetAllHandlerSearch" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
 
