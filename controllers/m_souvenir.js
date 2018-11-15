@@ -52,6 +52,24 @@ const MSouvenirController = {
         });
     },
 
+        // GET ALL SOUVENIR
+        GetUnit : (req, res, next) => {
+            logger.info("Initialized Souvenir : GetAll" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    
+            global.dbo.collection('m_unit').find().toArray((err, data) => {
+                if(err)
+                {
+                    logger.info("Souvenir : GetAll Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                    logger.error(err);
+                    return next(new Error());
+                }
+    
+                logger.info("Souvenir : GetAll successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                logger.info({data : data}, "Souvenir : GetAll content");
+                Response.send(res, 200, data);
+            });
+        },
+
     //GET ALL SOUVENIR BY ID
     GetDetail : (req, res, next) => {
         logger.info("Initialized Souvenir : GetDetail" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
@@ -226,7 +244,7 @@ const MSouvenirController = {
         var oldmodel = {};
         var deletemodel = {};
 
-        global.dbo.collection('m_souvenir').findOne({'_id' : ObjectID (id)}).toArray((err, data) => {
+        global.dbo.collection('m_souvenir').find({'_id' : ObjectID (id)}).toArray((err, data) => {
             if(err)
             {
                 // logger.info("Souvenir : Delete Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
