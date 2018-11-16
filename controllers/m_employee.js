@@ -24,12 +24,16 @@ const EmployeeController = {
             },
             {
                 $project: {
+                    '_id' : 1,
                     'employee_number': 1,
                     'first_name': 1,
                     'last_name': 1,
                     'company_name': '$Company_Doc.nama',
+                    'm_company_id': '$Company_Doc._id',
                     'created_date': 1,
                     'created_by': 1,
+                    'update_date': 1,
+                    'update_by': 1,
                     'email' : 1
 
 
@@ -181,6 +185,8 @@ const EmployeeController = {
             updatemodel.updated_by = null;
 
             var model = new employeeModel(updatemodel);
+
+            console.log("UPDATE Model : " + updatemodel);
 
             global.dbo.collection('m_employee').findOneAndUpdate
             (

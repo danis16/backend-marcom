@@ -33,7 +33,10 @@ module.exports = exports = function(server){
     //user
     server.post('/api/user/login', UserController.LoginHandler);
     server.get('/api/user/logout', Middleware.checkToken, UserController.LogoutHandler);
-   
+    server.get('/api/user/', UserController.GetAll);
+    server.get('/api/user/:id', UserController.GetDetail);
+    server.post('/api/user/', UserController.Create);
+
      //m_souvenir
     server.get('/api/souvenir/', MsouvenirController.GetAll);
     server.get('/api/souvenir/:id', MsouvenirController.GetDetail);
