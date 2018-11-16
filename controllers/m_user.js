@@ -102,43 +102,34 @@ const UserController = {
 
     global.dbo
       .collection("m_user")
-      .aggregate([
-        {
-          $lookup: {
-            from: "m_role",
-            localField: "m_role_id",
-            foreignField: "_id",
-            as: "role_lookup"
-          },
-          $lookup: {
-            from: "m_employee",
-            localField: "m_employee_id",
-            foreignField: "_id",
-            as: "employee_lookup"
-          }
-        },
-        {
-          $unwind: "$role_lookup",
-          $unwind: "$employee_lookup"
-        },
-        {
-          $match: { is_delete: false }
-        },
-        {
-          $project: {
-            _id: 1,
-            username: 1,
-            password: 1,
-            m_role_id: "$role_lookup.name",
-            m_employee_id: "$employee_lookup.name",
-            is_delete: 1,
-            created_by: 1,
-            created_date: 1,
-            updated_by: 1,
-            updated_date: 1
-          }
-        }
-      ])
+      .aggregate([      
+        { $lookup: { from: 'm_role', localField: 'm_role_id', foreignField: '_id', as: 'role_lookup' } },
+        { $lookup: { from: 'm_employee', localField: 'm_employee_id', foreignField: '_id', as: 'employee_lookup' } },
+              { $unwind: '$role_lookup' },
+              { $unwind: '$employee_lookup' },
+              {
+                  $match:
+                  {
+                      "is_delete": false
+  
+                  }
+              },
+              {
+                  $project: {
+                    username :1,
+                    password:1,
+                    role_name: '$role_lookup.name',
+                    employee_first_name : '$employee_lookup.first_name',
+                    employee_last_name : '$employee_lookup.last_name',
+                    is_delete: 1,
+                    created_by: 1,
+                    created_date: 1,
+                    updated_by: 1,
+                    updated_date: 1  
+                  }
+              }
+  
+          ])
       .toArray((err, data) => {
         if (err) {
           logger.info(
@@ -171,43 +162,35 @@ const UserController = {
 
     global.dbo
       .collection("m_user")
-      .aggregate([
-        {
-          $lookup: {
-            from: "m_role",
-            localField: "m_role_id",
-            foreignField: "_id",
-            as: "role_lookup"
-          },
-          $lookup: {
-            from: "m_employee",
-            localField: "m_employee_id",
-            foreignField: "_id",
-            as: "employee_lookup"
-          }
-        },
-        {
-          $unwind: "$role_lookup",
-          $unwind: "$employee_lookup"
-        },
-        {
-          $match: { is_delete: false }
-        },
-        {
-          $project: {
-            _id: 1,
-            username: 1,
-            password: 1,
-            m_role_id: "$role_lookup.name",
-            m_employee_id: "$employee_lookup.name",
-            is_delete: 1,
-            created_by: 1,
-            created_date: 1,
-            updated_by: 1,
-            updated_date: 1
-          }
-        }
-      ])
+      .aggregate([      
+        { $lookup: { from: 'm_role', localField: 'm_role_id', foreignField: '_id', as: 'role_lookup' } },
+        { $lookup: { from: 'm_employee', localField: 'm_employee_id', foreignField: '_id', as: 'employee_lookup' } },
+              { $unwind: '$role_lookup' },
+              { $unwind: '$employee_lookup' },
+              {
+                  $match:
+                  {
+                      "is_delete": false
+  
+                  }
+              },
+              {
+                  $project: {
+                    username :1,
+                    password:1,
+                    role_name: '$role_lookup.name',
+                    employee_first_name : '$employee_lookup.first_name',
+                    employee_last_name : '$employee_lookup.last_name',
+                    is_delete: 1,
+                    created_by: 1,
+                    created_date: 1,
+                    updated_by: 1,
+                    updated_date: 1  
+  
+                  }
+              }
+  
+          ])
       .toArray((err, data) => {
         if (err) {
           logger.info(
@@ -241,43 +224,34 @@ const UserController = {
 
     global.dbo
       .collection("m_user")
-      .aggregate([
-        {
-          $lookup: {
-            from: "m_role",
-            localField: "m_role_id",
-            foreignField: "_id",
-            as: "role_lookup"
-          },
-          $lookup: {
-            from: "m_employee",
-            localField: "m_employee_id",
-            foreignField: "_id",
-            as: "employee_lookup"
-          }
-        },
-        {
-          $unwind: "$role_lookup",
-          $unwind: "$employee_lookup"
-        },
-        {
-          $match: { is_delete: false }
-        },
-        {
-          $project: {
-            _id: 1,
-            username: 1,
-            password: 1,
-            m_role_id: "$role_lookup.name",
-            m_employee_id: "$employee_lookup.name",
-            is_delete: 1,
-            created_by: 1,
-            created_date: 1,
-            updated_by: 1,
-            updated_date: 1
-          }
-        }
-      ])
+      .aggregate([      
+        { $lookup: { from: 'm_role', localField: 'm_role_id', foreignField: '_id', as: 'role_lookup' } },
+        { $lookup: { from: 'm_employee', localField: 'm_employee_id', foreignField: '_id', as: 'employee_lookup' } },
+              { $unwind: '$role_lookup' },
+              { $unwind: '$employee_lookup' },
+              {
+                  $match:
+                  {
+                      "is_delete": false
+  
+                  }
+              },
+              {
+                  $project: {
+                    username :1,
+                    password:1,
+                    role_name: '$role_lookup.name',
+                    employee_first_name : '$employee_lookup.first_name',
+                    employee_last_name : '$employee_lookup.last_name',
+                    is_delete: 1,
+                    created_by: 1,
+                    created_date: 1,
+                    updated_by: 1,
+                    updated_date: 1  
+                  }
+              }
+  
+          ])
 
     data.m_role_id = ObjectId(reqdata.m_role_id);
     data.m_employee_id = ObjectId(reqdata.m_employee_id);
@@ -323,43 +297,34 @@ const UserController = {
       global.dbo
       .collection("m_user")
       .find({ is_delete: false, _id: ObjectID(id) })
-      .aggregate([
-        {
-          $lookup: {
-            from: "m_role",
-            localField: "m_role_id",
-            foreignField: "_id",
-            as: "role_lookup"
-          },
-          $lookup: {
-            from: "m_employee",
-            localField: "m_employee_id",
-            foreignField: "_id",
-            as: "employee_lookup"
-          }
-        },
-        {
-          $unwind: "$role_lookup",
-          $unwind: "$employee_lookup"
-        },
-        {
-          $match: { is_delete: false }
-        },
-        {
-          $project: {
-            _id: 1,
-            username: 1,
-            password: 1,
-            m_role_id: "$role_lookup.name",
-            m_employee_id: "$employee_lookup.name",
-            is_delete: 1,
-            created_by: 1,
-            created_date: 1,
-            updated_by: 1,
-            updated_date: 1
-          }
-        }
-      ])
+      .aggregate([      
+        { $lookup: { from: 'm_role', localField: 'm_role_id', foreignField: '_id', as: 'role_lookup' } },
+        { $lookup: { from: 'm_employee', localField: 'm_employee_id', foreignField: '_id', as: 'employee_lookup' } },
+              { $unwind: '$role_lookup' },
+              { $unwind: '$employee_lookup' },
+              {
+                  $match:
+                  {
+                      "is_delete": false
+  
+                  }
+              },
+              {
+                  $project: {
+                    username :1,
+                    password:1,
+                    role_name: '$role_lookup.name',
+                    employee_first_name : '$employee_lookup.first_name',
+                    employee_last_name : '$employee_lookup.last_name',
+                    is_delete: 1,
+                    created_by: 1,
+                    created_date: 1,
+                    updated_by: 1,
+                    updated_date: 1  
+                  }
+              }
+  
+          ])
       .toArray((err, data) => {
         if (err) {
           logger.info(
