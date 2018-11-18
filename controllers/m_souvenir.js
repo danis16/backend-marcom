@@ -52,7 +52,7 @@ const MSouvenirController = {
         });
     },
 
-        // GET ALL SOUVENIR
+        // GET ALL SOUVENIR UNIT
         GetUnit : (req, res, next) => {
             logger.info("Initialized Souvenir : GetAll" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
     
@@ -70,7 +70,7 @@ const MSouvenirController = {
             });
         },
 
-    //GET ALL SOUVENIR BY ID
+    //GET DETAIL SOUVENIR BY ID
     GetDetail : (req, res, next) => {
         logger.info("Initialized Souvenir : GetDetail" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
         let id = req.params.id;

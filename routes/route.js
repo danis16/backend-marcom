@@ -43,7 +43,6 @@ module.exports = exports = function(server){
     server.post('/api/souvenir/', MsouvenirController.Create);
     server.put('/api/souvenir/:id', MsouvenirController.Update);
     server.del('/api/souvenir/:id', MsouvenirController.Delete);
-
     server.get('/api/souvenir/getunit', MsouvenirController.GetUnit);
  
      //t_souvenir
