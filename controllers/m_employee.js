@@ -76,6 +76,8 @@ const EmployeeController = {
     GetDetailByEmployeeIDHandler: (req, res, next) => {
         logger.info("Initialized Employee : GetDetailByEmployeeIDHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
         let id = req.params.id;
+        console.log("IDDDDDDDD : "+id);
+
 
         global.dbo.collection('m_employee').aggregate([
             { $lookup: { from: 'm_company', localField: 'm_company_id', foreignField: '_id', as: 'Company_Doc' } },
@@ -153,6 +155,72 @@ const EmployeeController = {
         });
     },
 
+    
+    GetAllHandlerSearch: (req, res, next) => {
+        logger.info("Initialized Supplier : GetAllHandlerSearch" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+
+        let search = req.body;
+        console.log("Request");
+        console.log(search.filter);
+        console.log(search.filter.id);
+        var myMatch = {};
+        for (var i = 0; i < search.filter.length; i++) {
+            myMatch[search.filter[i].id] = search.filter[i].value;
+            console.log("############################" + i + search.filter.length);
+        }
+
+        console.log("My Match : ");
+        console.log(myMatch);
+
+
+        global.dbo.collection('m_employee').aggregate([
+            { $lookup: { from: 'm_company', localField: 'm_company_id', foreignField: '_id', as: 'Company_Doc' } },
+            { $unwind: '$Company_Doc' },
+            // {
+            //     $match:
+            //     {
+            //         "is_delete": false
+
+            //     }
+            // },
+            {
+                $project: {
+                    '_id' : 1,
+                    'employee_number': 1,
+                    'first_name': 1,
+                    'last_name': 1,
+                    'company_name': '$Company_Doc.nama',
+                    'm_company_id': '$Company_Doc._id',
+                    'created_date': 1,
+                    'created_by': 1,
+                    'update_date': 1,
+                    'update_by': 1,
+                    'email' : 1,
+                    'is_delete' : 1
+
+
+                }
+            },
+            {
+                $match: {
+                    $and:
+                        [
+                            myMatch
+                        ]
+                }
+            }
+        ]).toArray((err, data) => {
+            if (err) {
+                logger.info("Supplier : GetAllHandlerSearch Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+                logger.error(err);
+                return next(new Error());
+            }
+
+            logger.info("Supplier : GetAllHandlerSearch successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+            logger.info({ data: data }, "Supplier : GetAllHandlerSearch content");
+            Response.send(res, 200, data);
+        });
+    },  
 
     UpdateEmployeeHandler : (req, res, next) => {
         let id = req.params.id;
@@ -249,225 +317,151 @@ const EmployeeController = {
                 }
             );
         });
-    },
-
-
-    GetAllHandlerSearch: (req, res, next) => {
-        logger.info("Initialized Supplier : GetAllHandlerSearch" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-
-        let search = req.body;
-        console.log("Request");
-        console.log(search.filter);
-
-        var myMatch = {};
-        for (var i = 0; i < search.filter.length; i++) {
-            myMatch[search.filter[i].id] = search.filter[i].value;
-        }
-
-        console.log("My Match : ");
-        console.log(myMatch);
-
-
-        global.dbo.collection('Suppliers').aggregate([
-            {
-                $lookup:
-                {
-                    "localField": "ContactNameTitleId",
-                    "from": "Titles",
-                    "foreignField": "_id",
-                    "as": "SuppliersTitle"
-                }
-            },
-            {
-                $unwind: "$SuppliersTitle"
-            },
-            {
-                $project:
-                {
-                    "_id": "$_id",
-                    "CompanyName": "$CompanyName",
-                    "ContactName": "$ContactName",
-                    "ContactEmail": "$ContactEmail",
-                    "ContactTitle": "$ContactTitle",
-                    "Address": "$Address",
-                    "City": "$City",
-                    "PostalCode": "$PostalCode",
-                    "Country": "$Country",
-                    "Phone": "$Phone",
-                    "Fax": "$Fax",
-                    "IsDelete": "$IsDelete",
-                    "CreatedDate": { "$dateToString": { "format": "%Y-%m-%d", "date": "$CreatedDate" } },
-                    "CreatedBy": "$CreatedBy",
-                    "UpdateDate": "$UpdateDate",
-                    "UpdateBy": { "$dateToString": { "format": "%Y-%m-%d", "date": "$UpdateBy" } },
-                    "FullAddress": { $concat: ["$Address", " ", "$City", " ", "$PostalCode", " ", "$Country"] },
-                    "Code": "$Code",
-                    "ContactNameTitleId": "$ContactNameTitleId",
-                    "ContactNameTitle": "$SuppliersTitle.Name"
-                }
-            },
-            {
-                $match: {
-                    $and:
-                        [
-                            myMatch
-                        ]
-                }
-            }
-        ]).toArray((err, data) => {
-            if (err) {
-                logger.info("Supplier : GetAllHandlerSearch Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                logger.error(err);
-                return next(new Error());
-            }
-
-            logger.info("Supplier : GetAllHandlerSearch successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-            logger.info({ data: data }, "Supplier : GetAllHandlerSearch content");
-            Response.send(res, 200, data);
-        });
-    },
-
-    GetDetailBySupplierIDHandler: (req, res, next) => {
-        logger.info("Initialized Supplier : GetDetailBySupplierIDHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-        let id = req.params.id;
-
-        global.dbo.collection('Suppliers').aggregate([
-            {
-                $lookup:
-                {
-                    "localField": "ContactNameTitleId",
-                    "from": "Titles",
-                    "foreignField": "_id",
-                    "as": "SuppliersTitle"
-                }
-            },
-            {
-                $unwind: "$SuppliersTitle"
-            },
-            {
-                $match:
-                {
-                    "IsDelete": false,
-                    "_id": ObjectID(id)
-                }
-            },
-            {
-                $project:
-                {
-                    "_id": "$_id",
-                    "CompanyName": "$CompanyName",
-                    "ContactName": "$ContactName",
-                    "ContactEmail": "$ContactEmail",
-                    "ContactTitle": "$ContactTitle",
-                    "Address": "$Address",
-                    "City": "$City",
-                    "PostalCode": "$PostalCode",
-                    "Country": "$Country",
-                    "Phone": "$Phone",
-                    "Fax": "$Fax",
-                    "IsDelete": "$IsDelete",
-                    "CreatedDate": { "$dateToString": { "format": "%Y-%m-%d", "date": "$CreatedDate" } },
-                    "CreatedBy": "$CreatedBy",
-                    "UpdateDate": "$UpdateDate",
-                    "UpdateBy": { "$dateToString": { "format": "%Y-%m-%d", "date": "$UpdateBy" } },
-                    "FullAddress": { $concat: ["$Address", " ", "$City", " ", "$PostalCode", " ", "$Country"] },
-                    "Code": "$Code",
-                    "ContactNameTitleId": "$ContactNameTitleId",
-                    "ContactNameTitle": "$SuppliersTitle.Name"
-                }
-            }
-        ]).toArray((err, data) => {
-            if (err) {
-                logger.info("Supplier : GetDetailBySupplierIDHandler Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                logger.error(err);
-                return next(new Error());
-            }
-
-            logger.info("Supplier : GetDetailBySupplierIDHandler successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-            logger.info({ data: data }, "Supplier : GetDetailBySupplierIDHandler content");
-            Response.send(res, 200, data);
-        });
-    },
-    GetAllHandlerSortByDescending: (req, res, next) => {
-        logger.info("Initialized Supplier : GetAllHandlerSortByDescending" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-
-        global.dbo.collection('Suppliers').aggregate([
-            {
-                $lookup:
-                {
-                    "localField": "ContactNameTitleId",
-                    "from": "Titles",
-                    "foreignField": "_id",
-                    "as": "SuppliersTitle"
-                }
-            },
-            {
-                $unwind: "$SuppliersTitle"
-            },
-            {
-                $match:
-                {
-                    "IsDelete": false
-                }
-            },
-            {
-                $project:
-                {
-                    "_id": "$_id",
-                    "CompanyName": "$CompanyName",
-                    "ContactName": "$ContactName",
-                    "ContactEmail": "$ContactEmail",
-                    "ContactTitle": "$ContactTitle",
-                    "Address": "$Address",
-                    "City": "$City",
-                    "PostalCode": "$PostalCode",
-                    "Country": "$Country",
-                    "Phone": "$Phone",
-                    "Fax": "$Fax",
-                    "IsDelete": "$IsDelete",
-                    "CreatedDate": { "$dateToString": { "format": "%Y-%m-%d", "date": "$CreatedDate" } },
-                    "CreatedBy": "$CreatedBy",
-                    "UpdateDate": "$UpdateDate",
-                    "UpdateBy": { "$dateToString": { "format": "%Y-%m-%d", "date": "$UpdateBy" } },
-                    "FullAddress": { $concat: ["$Address", " ", "$City", " ", "$PostalCode", " ", "$Country"] },
-                    "Code": "$Code",
-                    "ContactNameTitleId": "$ContactNameTitleId",
-                    "ContactNameTitle": "$SuppliersTitle.Name"
-                }
-            },
-            {
-                $sort: { "_id": -1 }
-            },
-            {
-                $limit: 1
-            },
-        ]).toArray((err, data) => {
-            if (err) {
-                logger.info("Supplier : GetAllHandlerSortByDescending Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                logger.error(err);
-                return next(new Error());
-            }
-
-            logger.info("Supplier : GetAllHandlerSortByDescending successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-            logger.info({ data: data }, "Supplier : GetAllHandlerSortByDescending content");
-            Response.send(res, 200, data);
-        });
-    },
-    GetListContactTitleName: (req, res, next) => {
-        logger.info("Initialized Supplier : GetListContactTitleName" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-
-        global.dbo.collection('Titles').aggregate([]).toArray((err, data) => {
-            if (err) {
-                logger.info("Supplier : GetListContactTitleName Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-                logger.error(err);
-                return next(new Error());
-            }
-
-            logger.info("Supplier : GetListContactTitleName successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
-            logger.info({ data: data }, "Supplier : GetListContactTitleName content");
-            Response.send(res, 200, data);
-        });
     }
+
+
+
+    // GetDetailBySupplierIDHandler: (req, res, next) => {
+    //     logger.info("Initialized Supplier : GetDetailBySupplierIDHandler" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    //     let id = req.params.id;
+
+    //     global.dbo.collection('Suppliers').aggregate([
+    //         {
+    //             $lookup:
+    //             {
+    //                 "localField": "ContactNameTitleId",
+    //                 "from": "Titles",
+    //                 "foreignField": "_id",
+    //                 "as": "SuppliersTitle"
+    //             }
+    //         },
+    //         {
+    //             $unwind: "$SuppliersTitle"
+    //         },
+    //         {
+    //             $match:
+    //             {
+    //                 "IsDelete": false,
+    //                 "_id": ObjectID(id)
+    //             }
+    //         },
+    //         {
+    //             $project:
+    //             {
+    //                 "_id": "$_id",
+    //                 "CompanyName": "$CompanyName",
+    //                 "ContactName": "$ContactName",
+    //                 "ContactEmail": "$ContactEmail",
+    //                 "ContactTitle": "$ContactTitle",
+    //                 "Address": "$Address",
+    //                 "City": "$City",
+    //                 "PostalCode": "$PostalCode",
+    //                 "Country": "$Country",
+    //                 "Phone": "$Phone",
+    //                 "Fax": "$Fax",
+    //                 "IsDelete": "$IsDelete",
+    //                 "CreatedDate": { "$dateToString": { "format": "%Y-%m-%d", "date": "$CreatedDate" } },
+    //                 "CreatedBy": "$CreatedBy",
+    //                 "UpdateDate": "$UpdateDate",
+    //                 "UpdateBy": { "$dateToString": { "format": "%Y-%m-%d", "date": "$UpdateBy" } },
+    //                 "FullAddress": { $concat: ["$Address", " ", "$City", " ", "$PostalCode", " ", "$Country"] },
+    //                 "Code": "$Code",
+    //                 "ContactNameTitleId": "$ContactNameTitleId",
+    //                 "ContactNameTitle": "$SuppliersTitle.Name"
+    //             }
+    //         }
+    //     ]).toArray((err, data) => {
+    //         if (err) {
+    //             logger.info("Supplier : GetDetailBySupplierIDHandler Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    //             logger.error(err);
+    //             return next(new Error());
+    //         }
+
+    //         logger.info("Supplier : GetDetailBySupplierIDHandler successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    //         logger.info({ data: data }, "Supplier : GetDetailBySupplierIDHandler content");
+    //         Response.send(res, 200, data);
+    //     });
+    // },
+    // GetAllHandlerSortByDescending: (req, res, next) => {
+    //     logger.info("Initialized Supplier : GetAllHandlerSortByDescending" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+
+    //     global.dbo.collection('Suppliers').aggregate([
+    //         {
+    //             $lookup:
+    //             {
+    //                 "localField": "ContactNameTitleId",
+    //                 "from": "Titles",
+    //                 "foreignField": "_id",
+    //                 "as": "SuppliersTitle"
+    //             }
+    //         },
+    //         {
+    //             $unwind: "$SuppliersTitle"
+    //         },
+    //         {
+    //             $match:
+    //             {
+    //                 "IsDelete": false
+    //             }
+    //         },
+    //         {
+    //             $project:
+    //             {
+    //                 "_id": "$_id",
+    //                 "CompanyName": "$CompanyName",
+    //                 "ContactName": "$ContactName",
+    //                 "ContactEmail": "$ContactEmail",
+    //                 "ContactTitle": "$ContactTitle",
+    //                 "Address": "$Address",
+    //                 "City": "$City",
+    //                 "PostalCode": "$PostalCode",
+    //                 "Country": "$Country",
+    //                 "Phone": "$Phone",
+    //                 "Fax": "$Fax",
+    //                 "IsDelete": "$IsDelete",
+    //                 "CreatedDate": { "$dateToString": { "format": "%Y-%m-%d", "date": "$CreatedDate" } },
+    //                 "CreatedBy": "$CreatedBy",
+    //                 "UpdateDate": "$UpdateDate",
+    //                 "UpdateBy": { "$dateToString": { "format": "%Y-%m-%d", "date": "$UpdateBy" } },
+    //                 "FullAddress": { $concat: ["$Address", " ", "$City", " ", "$PostalCode", " ", "$Country"] },
+    //                 "Code": "$Code",
+    //                 "ContactNameTitleId": "$ContactNameTitleId",
+    //                 "ContactNameTitle": "$SuppliersTitle.Name"
+    //             }
+    //         },
+    //         {
+    //             $sort: { "_id": -1 }
+    //         },
+    //         {
+    //             $limit: 1
+    //         },
+    //     ]).toArray((err, data) => {
+    //         if (err) {
+    //             logger.info("Supplier : GetAllHandlerSortByDescending Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    //             logger.error(err);
+    //             return next(new Error());
+    //         }
+
+    //         logger.info("Supplier : GetAllHandlerSortByDescending successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    //         logger.info({ data: data }, "Supplier : GetAllHandlerSortByDescending content");
+    //         Response.send(res, 200, data);
+    //     });
+    // },
+    // GetListContactTitleName: (req, res, next) => {
+    //     logger.info("Initialized Supplier : GetListContactTitleName" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+
+    //     global.dbo.collection('Titles').aggregate([]).toArray((err, data) => {
+    //         if (err) {
+    //             logger.info("Supplier : GetListContactTitleName Error" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    //             logger.error(err);
+    //             return next(new Error());
+    //         }
+
+    //         logger.info("Supplier : GetListContactTitleName successfully" + " at " + moment().format('DD/MM/YYYY, hh:mm:ss a'));
+    //         logger.info({ data: data }, "Supplier : GetListContactTitleName content");
+    //         Response.send(res, 200, data);
+    //     });
+    // }
 };
 
 module.exports = EmployeeController;

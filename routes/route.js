@@ -60,6 +60,6 @@ module.exports = exports = function(server){
       server.put('/api/employee/:id', EmployeeController.UpdateEmployeeHandler);
       server.del('/api/employee/:id', EmployeeController.DeleteEmployeeHandler);
       server.get('/api/employee/getcompany', EmployeeController.GetListCompanyName);
-    // server.post('/api/employee/search', EmployeeController.SearchEmployeeHandler);
+      server.post('/api/employee/search', EmployeeController.GetAllHandlerSearch);
     
 };
